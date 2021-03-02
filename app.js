@@ -22,8 +22,13 @@ app.post("/api/shorturl/red", function (req, res) {
 });
 
 app.post("/api/shorturl/new", middleware.urlCheck, function (req, res) {
-  shortend[shortend.length] = req.body.url;
-  res.json({ original_url: req.body.url, short_url: shortend.length - 1 });
+  const { url } = req.body;
+  if (!shortend.includes(url)) {
+    shortend[shortend.length] = url;
+    res.json({ original_url: url, short_url: shortend.length - 1 });
+  } else {
+    res.json({ original_url: url, short_url: shortend.indexOf(url) });
+  }
 });
 
 module.exports = app;
