@@ -75,7 +75,7 @@ shortUrl.use(express.json());
 shortUrl.use(express.urlencoded());
 shortUrl.use("/public", express.static(`./public`));
 
-shortUrl.post("/new", urlCheck, function (req, res) {
+shortUrl.post("/new", urlCheck, (req, res) => {
   const { url } = req.body;
   console.log(req.body);
   const theUrl = database.findUrl(url);
@@ -95,7 +95,18 @@ shortUrl.post("/new", urlCheck, function (req, res) {
   }
 });
 
-shortUrl.post("/red", function (req, res) {
+shortUrl.get("/:id", (req, res) => {
+  const { id } = req.params;
+
+  console.log(id);
+  const url = database.findUrl(null, id);
+  console.log(database);
+  url.redirectCount++;
+  res.writeHead(302, { Location: url.originalUrl });
+  res.end();
+});
+
+shortUrl.post("/red", (req, res) => {
   const { id } = req.body;
 
   const url = database.findUrl(null, id);
