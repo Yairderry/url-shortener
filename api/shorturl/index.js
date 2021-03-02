@@ -100,8 +100,8 @@ shortUrl.get("/:id", (req, res) => {
 
   console.log(id);
   const url = database.findUrl(null, id);
-  console.log(database);
   url.redirectCount++;
+  database.setData(process.env.DB_URL);
   res.writeHead(302, { Location: url.originalUrl });
   res.end();
 });
@@ -110,8 +110,9 @@ shortUrl.post("/red", (req, res) => {
   const { id } = req.body;
 
   const url = database.findUrl(null, id);
-  console.log(database);
   url.redirectCount++;
+  database.setData(process.env.DB_URL);
+
   res.writeHead(302, { Location: url.originalUrl });
   res.end();
 });
