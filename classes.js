@@ -37,7 +37,7 @@ class DataBase {
       redirectCount
     );
     this.urls.push(url);
-    this.setData(process.env.TEST_DB_URL);
+    this.setData(process.env.DB_URL);
   }
 
   findUrl(originalUrl, shortUrlId) {
