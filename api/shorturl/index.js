@@ -1,15 +1,46 @@
 require("dotenv").config();
 const express = require("express");
-const middleware = require("../../utils");
+const axios = require("axios").default;
+const { urlCheck, dateToSqlFormat } = require("../../utils");
 
 class DataBase {
   constructor() {
     this.urls = [];
   }
 
-  addUrl(originalUrl, shortUrlId = this.urls.length) {
-    const url = new Url(new Date(), originalUrl, shortUrlId);
+  getData(url) {
+    axios.get(url).then((res) => {
+      res.data.record.urls.forEach(
+        ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
+          console.log({ originalUrl, redirectCount, shortUrlId, creationDate });
+          this.urls.push(
+            new Url(originalUrl, creationDate, shortUrlId, redirectCount)
+          );
+        }
+      );
+    });
+  }
+
+  setData(url) {
+    axios.put(url, this).then((res) => {
+      console.log(res);
+    });
+  }
+
+  addUrl(
+    originalUrl,
+    date = new Date(),
+    shortUrlId = this.urls.length,
+    redirectCount = 0
+  ) {
+    const url = new Url(
+      originalUrl,
+      dateToSqlFormat(date),
+      shortUrlId,
+      redirectCount
+    );
     this.urls.push(url);
+    this.setData(process.env.DB_URL);
   }
 
   findUrl(originalUrl, shortUrlId) {
@@ -26,33 +57,38 @@ class DataBase {
 }
 
 class Url {
-  constructor(creationDate, originalUrl, shortUrlId) {
-    this.creationDate = creationDate;
-    this.redirectCount = 0;
+  constructor(originalUrl, creationDate, shortUrlId, redirectCount = 0) {
     this.originalUrl = originalUrl;
+    this.creationDate = creationDate;
     this.shortUrlId = shortUrlId;
+    this.redirectCount = redirectCount;
   }
 }
 
-const shortend = new DataBase();
+/*------------------------------------------------------------------*/
+const database = new DataBase();
+database.getData(process.env.DB_URL);
+
 const shortUrl = express.Router();
 
 shortUrl.use(express.json());
 shortUrl.use(express.urlencoded());
 shortUrl.use("/public", express.static(`./public`));
 
-shortUrl.post("/new", middleware.urlCheck, function (req, res) {
+shortUrl.post("/new", urlCheck, function (req, res) {
   const { url } = req.body;
-  const theUrl = shortend.findUrl(url);
+  console.log(req.body);
+  const theUrl = database.findUrl(url);
+
   if (!theUrl) {
-    shortend.addUrl(url);
-    const newUrl = shortend.findUrl(url);
-    res.json({
+    database.addUrl(url);
+    const newUrl = database.findUrl(url);
+    res.status(200).json({
       original_url: newUrl.originalUrl,
       short_url: newUrl.shortUrlId,
     });
   } else {
-    res.json({
+    res.status(200).json({
       original_url: theUrl.originalUrl,
       short_url: theUrl.shortUrlId,
     });
@@ -61,9 +97,10 @@ shortUrl.post("/new", middleware.urlCheck, function (req, res) {
 
 shortUrl.post("/red", function (req, res) {
   const { id } = req.body;
-  console.log(shortend.urls);
 
-  const url = shortend.findUrl(null, id);
+  const url = database.findUrl(null, id);
+  console.log(database);
+  url.redirectCount++;
   res.writeHead(302, { Location: url.originalUrl });
   res.end();
 });

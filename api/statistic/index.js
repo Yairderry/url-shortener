@@ -1,9 +1,11 @@
 const { Router } = require("express");
+const statistic = require("./stat");
 
-const statistic = Router();
+const stat = Router();
 
-statistic.use("*", (req, res) => {
-  res.status(404).send({ message: "Bin not found" });
-});
+stat.use("/statistic", statistic);
+// stat.use("*", (req, res) => {
+//   res.status(404).send({ message: "Bin not found" });
+// });
 
-module.exports = statistic;
+module.exports = stat;
