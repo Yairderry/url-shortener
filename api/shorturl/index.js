@@ -5,7 +5,7 @@ const { urlCheck } = require("../../utils");
 
 /*------------------------------------------------------------------*/
 const database = new DataBase();
-database.getData(process.env.DB_URL);
+database.getData(process.env.TEST_DB_URL);
 
 const shortUrl = express.Router();
 
@@ -37,18 +37,11 @@ shortUrl.get("/:id", (req, res) => {
 
   const url = database.findUrl(null, id);
   url.redirectCount++;
-  database.setData(process.env.DB_URL);
-  res.writeHead(302, { Location: url.originalUrl });
-  res.end();
-});
-
-shortUrl.post("/red", (req, res) => {
-  const { id } = req.body;
-
-  const url = database.findUrl(null, id);
-  url.redirectCount++;
-  database.setData(process.env.DB_URL);
-
+  try {
+    database.setData(process.env.TEST_DB_URL);
+  } catch (e) {
+    res.status(500).send({ error: "There was an error with our servers" });
+  }
   res.writeHead(302, { Location: url.originalUrl });
   res.end();
 });
