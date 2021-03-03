@@ -27,7 +27,7 @@ a {
 form {
   margin: 10px auto;
   padding: 20px;
-  max-width: 600px;
+  max-width: 1000px;
 }
 
 label {
@@ -36,11 +36,18 @@ label {
 
 input {
   padding: 5px;
-  display: block;
-  margin: auto;
 }
 
 input[type="text"] {
   width: 220px;
   text-align: center;
+}
+
+.input {
+  display: inline;
+}
+
+input[type="submit"] {
+  padding: 5px 25px;
+  margin: auto;
 }

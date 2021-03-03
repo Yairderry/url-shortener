@@ -13,20 +13,24 @@
         <form action="/api/shorturl/new" method="POST">
           <fieldset>
             <legend>URL Shortener</legend>
-            <label for="url_input">URL:</label>
-            <input
-              id="url_input"
-              type="text"
-              name="url"
-              placeholder="Enter URL to shorten here"
-            />
-            <label for="custom-url-input">CUSTOM URL:</label>
-            <input
-              id="custom-url-input"
-              type="text"
-              name="customUrl"
-              placeholder="Enter custom URL"
-            />
+            <div class="input">
+              <label for="url_input">URL:</label>
+              <input
+                id="url_input"
+                type="text"
+                name="url"
+                placeholder="Enter URL to shorten here"
+              />
+            </div>
+            <div class="input">
+              <label for="custom-url-input">CUSTOM URL:</label>
+              <input
+                id="custom-url-input"
+                type="text"
+                name="customUrl"
+                placeholder="Enter custom URL"
+              />
+            </div>
             <input type="submit" value="POST URL" />
           </fieldset>
         </form>

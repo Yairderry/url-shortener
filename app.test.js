@@ -1,4 +1,5 @@
 const request = require("supertest");
+const shortUrl = require("./api/shorturl/index.js");
 const app = require("./app.js");
 
 const urlToShort = { url: "https://www.reddit.com" };
@@ -7,7 +8,8 @@ const customUrlToShort = { url: "https://www.facebook.com", customUrl: "F" };
 
 const expectedUrlError = { error: "invalid url" };
 const urlNotFoundError = { error: "This short url was not found" };
-const expectedServersError = { error: "There was an error with our servers" };
+// const expectedServersError = { error: "There was an error with our servers" };
+const customUrlTakenError = { error: "custom url already taken!" };
 const invalidUrlToShort = { url: "reddit" };
 
 describe("shorturl route", () => {
@@ -84,6 +86,15 @@ describe("shorturl route", () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(expectedResponse);
+    });
+
+    it("Should return an error message with status code 400 for custom short url taken", async () => {
+      const response = await request(app)
+        .post("/api/shorturl/new")
+        .send(customUrlToShort);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual(customUrlTakenError);
     });
 
     it("Should return an error message with status code 400 for invalid url", async () => {
