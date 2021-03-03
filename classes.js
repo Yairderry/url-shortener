@@ -1,11 +1,31 @@
 require("dotenv").config();
 const axios = require("axios").default;
-const { dateToSqlFormat } = require("./utils");
 
 const headers = {
   "X-Master-Key": process.env.API_KEY,
   "Content-Type": "application/json",
   "X-Bin-Versioning": false,
+};
+
+const dateToSqlFormat = (givenDate = null) => {
+  const date = givenDate ? new Date(givenDate) : new Date();
+
+  const sec = date.getSeconds().toString();
+  const s = sec.length === 2 ? sec : `0${sec}`;
+
+  const min = date.getMinutes().toString();
+  const m = min.length === 2 ? min : `0${min}`;
+
+  const hour = date.getHours().toString();
+  const h = hour.length === 2 ? hour : `0${hour}`;
+
+  const month = (date.getMonth() + 1).toString();
+  const M = month.length === 2 ? month : `0${month}`;
+
+  const day = date.getDate().toString();
+  const d = day.length === 2 ? day : `0${day}`;
+
+  return `${date.getFullYear()}-${M}-${d} ${h}:${m}:${s}`;
 };
 
 class DataBase {

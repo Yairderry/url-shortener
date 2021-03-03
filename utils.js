@@ -1,35 +1,46 @@
-const urlCheck = (req, res, next) => {
+const database = require("./classes");
+
+const validUrlCheck = (req, res, next) => {
   const { url } = req.body;
 
   const validUrlRegex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
 
   if (!validUrlRegex.test(url)) {
-    res.status(400).send({ error: "invalid url" });
+    res.status(400).json({ error: "invalid url" });
   } else {
     next();
     return;
   }
 };
 
-const dateToSqlFormat = (givenDate = null) => {
-  const date = givenDate ? new Date(givenDate) : new Date();
+const urlCheck = (req, res, next) => {
+  const { id } = req.params;
 
-  const sec = date.getSeconds().toString();
-  const s = sec.length === 2 ? sec : `0${sec}`;
-
-  const min = date.getMinutes().toString();
-  const m = min.length === 2 ? min : `0${min}`;
-
-  const hour = date.getHours().toString();
-  const h = hour.length === 2 ? hour : `0${hour}`;
-
-  const month = (date.getMonth() + 1).toString();
-  const M = month.length === 2 ? month : `0${month}`;
-
-  const day = date.getDate().toString();
-  const d = day.length === 2 ? day : `0${day}`;
-
-  return `${date.getFullYear()}-${M}-${d} ${h}:${m}:${s}`;
+  const url = database.findUrl(null, id);
+  if (!url) {
+    res.status(404).json({ error: "This short url was not found" });
+  } else {
+    next();
+    return;
+  }
 };
 
-module.exports = { urlCheck, dateToSqlFormat };
+const customUrlCheck = (req, res, next) => {
+  const { url } = req.body;
+  const customUrl = req.body.customUrl === "" ? undefined : req.body.customUrl;
+
+  if (customUrl === undefined) {
+    next();
+    return;
+  }
+
+  const theCustomUrl = database.findUrl(null, customUrl);
+
+  if (theCustomUrl) {
+    res.status(400).send({ error: "custom url already taken!" });
+    return;
+  }
+  next();
+};
+
+module.exports = { validUrlCheck, urlCheck, customUrlCheck };

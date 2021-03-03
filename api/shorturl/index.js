@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const database = require("../../classes.js");
-const { urlCheck } = require("../../utils");
+const { validUrlCheck, urlCheck, customUrlCheck } = require("../../utils");
 
 const shortUrl = express.Router();
 
@@ -9,26 +9,9 @@ shortUrl.use(express.json());
 shortUrl.use(express.urlencoded());
 shortUrl.use("/public", express.static(`./public`));
 
-shortUrl.post("/new", urlCheck, (req, res) => {
+shortUrl.post("/new", validUrlCheck, customUrlCheck, (req, res) => {
   const { url } = req.body;
   const customUrl = req.body.customUrl === "" ? undefined : req.body.customUrl;
-
-  if (customUrl !== undefined) {
-    const theCustomUrl = database.findUrl(null, customUrl);
-
-    if (!theCustomUrl) {
-      database.addUrl(url, new Date(), customUrl);
-      const newUrl = database.findUrl(url);
-
-      res.status(200).json({
-        original_url: newUrl.originalUrl,
-        short_url: newUrl.shortUrlId,
-      });
-    } else {
-      res.status(400).send({ error: "custom url already taken!" });
-    }
-    return;
-  }
 
   const theUrl = database.findUrl(url);
 
@@ -47,15 +30,10 @@ shortUrl.post("/new", urlCheck, (req, res) => {
   }
 });
 
-shortUrl.get("/:id", (req, res) => {
+shortUrl.get("/:id", urlCheck, (req, res) => {
   const { id } = req.params;
 
   const url = database.findUrl(null, id);
-
-  if (!url) {
-    res.status(404).json({ error: "This short url was not found" });
-    return;
-  }
 
   url.redirectCount++;
 
