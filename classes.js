@@ -1,6 +1,11 @@
 require("dotenv").config();
 const axios = require("axios").default;
 const { dateToSqlFormat } = require("./utils");
+const headers = {
+  "X-Master-Key": process.env.API_KEY,
+  "Content-Type": "application/json",
+  "X-Bin-Versioning": false,
+};
 
 class DataBase {
   constructor() {
@@ -8,21 +13,27 @@ class DataBase {
   }
 
   getData(url) {
-    axios.get(url).then((res) => {
-      res.data.record.urls.forEach(
-        ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
-          this.urls.push(
-            new Url(originalUrl, creationDate, shortUrlId, redirectCount)
-          );
-        }
-      );
-    });
+    axios
+      .get(url, { headers })
+      .then((res) => {
+        res.data.record.body.urls.forEach(
+          ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
+            this.urls.push(
+              new Url(originalUrl, creationDate, shortUrlId, redirectCount)
+            );
+          }
+        );
+      })
+      .catch((err) => console.log(err));
   }
 
   setData(url) {
-    axios.put(url, this).then((res) => {
-      console.log(res);
-    });
+    axios
+      .put(url, { body: this }, { headers })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
   }
 
   addUrl(
