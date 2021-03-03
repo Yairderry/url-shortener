@@ -51,7 +51,14 @@ shortUrl.get("/:id", (req, res) => {
   const { id } = req.params;
 
   const url = database.findUrl(null, id);
+
+  if (!url) {
+    res.status(404).json({ error: "This short url was not found" });
+    return;
+  }
+
   url.redirectCount++;
+
   try {
     database.setData(process.env.DB_URL);
   } catch (e) {

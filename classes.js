@@ -1,6 +1,7 @@
 require("dotenv").config();
 const axios = require("axios").default;
 const { dateToSqlFormat } = require("./utils");
+
 const headers = {
   "X-Master-Key": process.env.API_KEY,
   "Content-Type": "application/json",
