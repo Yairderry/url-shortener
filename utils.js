@@ -7,6 +7,7 @@ const urlCheck = (req, res, next) => {
     res.status(400).send({ error: "invalid url" });
   } else {
     next();
+    return;
   }
 };
 

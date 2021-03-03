@@ -1,11 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const DataBase = require("../../classes.js");
-
-/*------------------------------------------------------------------*/
-const database = new DataBase();
-database.getData(process.env.DB_URL);
-
+const database = require("../../classes.js");
 const statistic = express.Router();
 
 statistic.use(express.json());

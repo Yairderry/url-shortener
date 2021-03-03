@@ -1,3 +1,4 @@
+require("dotenv").config();
 const axios = require("axios").default;
 const { dateToSqlFormat } = require("./utils");
 
@@ -62,4 +63,7 @@ class Url {
   }
 }
 
-module.exports = DataBase;
+const database = new DataBase();
+database.getData(process.env.DB_URL);
+
+module.exports = database;
