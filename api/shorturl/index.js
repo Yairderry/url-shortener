@@ -11,10 +11,29 @@ shortUrl.use("/public", express.static(`./public`));
 
 shortUrl.post("/new", urlCheck, (req, res) => {
   const { url } = req.body;
+  const customUrl = req.body.customUrl === "" ? undefined : req.body.customUrl;
+
+  if (customUrl !== undefined) {
+    const theCustomUrl = database.findUrl(null, customUrl);
+
+    if (!theCustomUrl) {
+      database.addUrl(url, new Date(), customUrl);
+      const newUrl = database.findUrl(url);
+
+      res.status(200).json({
+        original_url: newUrl.originalUrl,
+        short_url: newUrl.shortUrlId,
+      });
+    } else {
+      res.status(400).send({ error: "custom url already taken!" });
+    }
+    return;
+  }
+
   const theUrl = database.findUrl(url);
 
   if (!theUrl) {
-    database.addUrl(url);
+    database.addUrl(url, new Date());
     const newUrl = database.findUrl(url);
     res.status(200).json({
       original_url: newUrl.originalUrl,
