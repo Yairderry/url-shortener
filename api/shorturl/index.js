@@ -15,19 +15,11 @@ shortUrl.post("/new", validUrlCheck, customUrlCheck, (req, res) => {
 
   const theUrl = database.findUrl(url);
 
-  if (!theUrl) {
-    database.addUrl(url, new Date(), customUrl);
-    const newUrl = database.findUrl(url);
-    res.status(200).json({
-      original_url: newUrl.originalUrl,
-      short_url: newUrl.shortUrlId,
-    });
-  } else {
-    res.status(200).json({
-      original_url: theUrl.originalUrl,
-      short_url: theUrl.shortUrlId,
-    });
-  }
+  const newUrl = theUrl ? theUrl : database.addUrl(url, new Date(), customUrl);
+  res.status(200).json({
+    original_url: newUrl.originalUrl,
+    short_url: newUrl.shortUrlId,
+  });
 });
 
 shortUrl.get("/:id", urlCheck, (req, res) => {

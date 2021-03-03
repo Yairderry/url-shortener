@@ -71,6 +71,7 @@ class DataBase {
     );
     this.urls.push(url);
     this.setData(process.env.DB_URL);
+    return url;
   }
 
   findUrl(originalUrl, shortUrlId) {
