@@ -3,14 +3,15 @@ const app = require("./app.js");
 
 const urlToShort = { url: "https://www.reddit.com" };
 const urlToShort2 = { url: "https://www.google.com" };
+const customUrlToShort = { url: "https://www.facebook.com", customUrl: "F" };
+
 const expectedUrlError = { error: "invalid url" };
 const urlNotFoundError = { error: "This short url was not found" };
 const expectedServersError = { error: "There was an error with our servers" };
+const invalidUrlToShort = { url: "reddit" };
 
 describe("shorturl route", () => {
   describe("POST methods", () => {
-    const invalidUrlToShort = { url: "reddit" };
-
     it("Should create a new short url successfully", async () => {
       const response = await request(app)
         .post("/api/shorturl/new")
@@ -18,7 +19,7 @@ describe("shorturl route", () => {
 
       const expectedResponse = {
         original_url: urlToShort.url,
-        short_url: 0,
+        short_url: "0",
       };
 
       expect(response.status).toBe(200);
@@ -36,7 +37,7 @@ describe("shorturl route", () => {
 
       const expectedResponse = {
         original_url: urlToShort.url,
-        short_url: 0,
+        short_url: "0",
       };
 
       expect(response1.status).toBe(200);
@@ -57,11 +58,11 @@ describe("shorturl route", () => {
 
       const expectedResponse = {
         original_url: urlToShort.url,
-        short_url: 0,
+        short_url: "0",
       };
       const expectedResponse2 = {
         original_url: urlToShort2.url,
-        short_url: 1,
+        short_url: "1",
       };
 
       expect(response1.status).toBe(200);
@@ -69,6 +70,20 @@ describe("shorturl route", () => {
 
       expect(response2.status).toBe(200);
       expect(response2.body).toEqual(expectedResponse2);
+    });
+
+    it("Should create a new custom short url", async () => {
+      const response = await request(app)
+        .post("/api/shorturl/new")
+        .send(customUrlToShort);
+
+      const expectedResponse = {
+        original_url: customUrlToShort.url,
+        short_url: "F",
+      };
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(expectedResponse);
     });
 
     it("Should return an error message with status code 400 for invalid url", async () => {
@@ -110,27 +125,37 @@ describe("statistic route", () => {
         .post("/api/shorturl/new")
         .send(urlToShort2);
 
-      const response3 = await request(app).get(`/api/statistic`);
+      const response3 = await request(app)
+        .post("/api/shorturl/new")
+        .send(customUrlToShort);
+
+      const response4 = await request(app).get(`/api/statistic`);
 
       const expectedResponse = {
         urls: [
           {
             originalUrl: urlToShort.url,
-            creationDate: response3.body.urls[0].creationDate,
-            shortUrlId: 0,
+            creationDate: response4.body.urls[0].creationDate,
+            shortUrlId: "0",
             redirectCount: 1,
           },
           {
             originalUrl: urlToShort2.url,
-            creationDate: response3.body.urls[1].creationDate,
-            shortUrlId: 1,
+            creationDate: response4.body.urls[1].creationDate,
+            shortUrlId: "1",
             redirectCount: 1,
+          },
+          {
+            originalUrl: customUrlToShort.url,
+            creationDate: response4.body.urls[2].creationDate,
+            shortUrlId: "F",
+            redirectCount: 0,
           },
         ],
       };
 
-      expect(response3.status).toBe(200);
-      expect(response3.body).toEqual(expectedResponse);
+      expect(response4.status).toBe(200);
+      expect(response4.body).toEqual(expectedResponse);
     });
 
     it("Should should return the statistics of a specific url", async () => {
@@ -145,7 +170,7 @@ describe("statistic route", () => {
       const expectedResponse = {
         originalUrl: "https://www.reddit.com",
         creationDate: response2.body.creationDate,
-        shortUrlId: 0,
+        shortUrlId: "0",
         redirectCount: 1,
       };
 

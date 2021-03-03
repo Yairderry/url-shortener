@@ -33,7 +33,7 @@ shortUrl.post("/new", urlCheck, (req, res) => {
   const theUrl = database.findUrl(url);
 
   if (!theUrl) {
-    database.addUrl(url, new Date());
+    database.addUrl(url, new Date(), customUrl);
     const newUrl = database.findUrl(url);
     res.status(200).json({
       original_url: newUrl.originalUrl,
