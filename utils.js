@@ -26,7 +26,6 @@ const urlCheck = (req, res, next) => {
 };
 
 const customUrlCheck = (req, res, next) => {
-  const { url } = req.body;
   const customUrl = req.body.customUrl === "" ? undefined : req.body.customUrl;
 
   if (customUrl === undefined) {

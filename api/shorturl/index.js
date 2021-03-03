@@ -15,11 +15,17 @@ shortUrl.post("/new", validUrlCheck, customUrlCheck, (req, res) => {
 
   const theUrl = database.findUrl(url);
 
-  const newUrl = theUrl ? theUrl : database.addUrl(url, new Date(), customUrl);
-  res.status(200).json({
-    original_url: newUrl.originalUrl,
-    short_url: newUrl.shortUrlId,
-  });
+  try {
+    const newUrl = theUrl
+      ? theUrl
+      : database.addUrl(url, new Date(), customUrl);
+    res.status(200).json({
+      original_url: newUrl.originalUrl,
+      short_url: newUrl.shortUrlId,
+    });
+  } catch (e) {
+    res.status(500).send({ error: "There was an error with our servers" });
+  }
 });
 
 shortUrl.get("/:id", urlCheck, (req, res) => {
