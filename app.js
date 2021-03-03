@@ -15,4 +15,8 @@ app.get("/", (req, res) => {
   res.sendFile(`${__dirname}/views/index.html`);
 });
 
+app.use("*", (req, res) => {
+  res.json({ error: "This route does not exist!" });
+});
+
 module.exports = app;

@@ -1,10 +1,27 @@
+* {
+  margin: 0%;
+  padding: 0%;
+}
+
 body {
   font-family: Arial, sans-serif;
   font-size: 16px;
   color: #222;
   background-color: #fff;
-  text-align: center;
   line-height: 1.4em;
+}
+
+h1 {
+  font-size: 50px;
+  text-align: center;
+  margin: 25px;
+  margin-top: 50px;
+}
+
+h2 {
+  font-size: 35px;
+  text-align: center;
+  margin: 10px;
 }
 
 main {
@@ -12,42 +29,70 @@ main {
   margin-top: 40px;
 }
 
-h3 {
-  margin-top: 30px;
-}
-
-.user-stories li {
-  margin-bottom: 1em;
-}
-
-a {
-  color: #2574a9;
-}
-
 form {
-  margin: 10px auto;
-  padding: 20px;
-  max-width: 1000px;
+  width: 35vw;
+  margin: auto;
+}
+
+.container {
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 label {
-  margin-right: 10px;
+  margin: 2.5vh 0vw 1vh 1vw;
+  align-self: flex-start;
 }
 
-input {
+#custom_url {
+  padding: 5px 0px;
+  height: 30px;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 20px;
+  width: 94%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+#custom_url span {
+  height: 100%;
+  width: 60%;
+  padding: 7px 0px 3px 10px;
+  border-right: 1px solid black;
+}
+
+#custom_url input {
+  height: 100%;
+  width: 40%;
   padding: 5px;
-}
-
-input[type="text"] {
-  width: 220px;
+  border: none;
+  border-radius: 5px;
   text-align: center;
+  font-size: 20px;
 }
 
-.input {
-  display: inline;
+#url_input {
+  padding: 5px;
+  height: 30px;
+  font-size: 20px;
+  border: 1px solid black;
+  border-radius: 5px;
+  width: 92%;
+  margin: auto;
+  display: block;
 }
 
 input[type="submit"] {
+  border: 1px solid black;
+  border-radius: 4px;
   padding: 5px 25px;
-  margin: auto;
+  width: 95%;
+  margin: 10px;
 }

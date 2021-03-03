@@ -5,7 +5,7 @@ const statistic = express.Router();
 
 statistic.use(express.json());
 statistic.use(express.urlencoded());
-statistic.use("/public", express.static(`./public`));
+// statistic.use("/public", express.static(`./public`));
 
 statistic.get("/", (req, res) => {
   res.status(200).json(database);

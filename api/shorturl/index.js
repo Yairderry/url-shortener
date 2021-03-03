@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-const database = require("../../classes.js");
 const { validUrlCheck, urlCheck, customUrlCheck } = require("../../utils");
+const database = require("../../classes.js");
 
 const shortUrl = express.Router();
 

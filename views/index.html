@@ -7,31 +7,34 @@
   </head>
 
   <body>
-    <h1>URL Shortener Microservice</h1>
+    <h1>Short The Fuck Up!</h1>
+    <h2>You got a big URL? Not anymore you don't!</h2>
     <main>
       <section>
         <form action="/api/shorturl/new" method="POST">
-          <fieldset>
-            <legend>URL Shortener</legend>
-            <div class="input">
-              <label for="url_input">URL:</label>
+          <fieldset class="container">
+            <label for="url_input">Put your damn URL in there!</label>
+            <input
+              id="url_input"
+              type="text"
+              name="url"
+              placeholder="Anything but pornhub please..."
+            />
+            <label for="custom-url-input">You can choose your own name</label>
+            <div id="custom_url">
+              <span>localhost:PORT/api/shortrul/</span>
+
               <input
-                id="url_input"
-                type="text"
-                name="url"
-                placeholder="Enter URL to shorten here"
-              />
-            </div>
-            <div class="input">
-              <label for="custom-url-input">CUSTOM URL:</label>
-              <input
-                id="custom-url-input"
+                id="custom_url_input"
                 type="text"
                 name="customUrl"
-                placeholder="Enter custom URL"
+                placeholder="Shits n' giggles"
               />
             </div>
-            <input type="submit" value="POST URL" />
+            <input
+              type="submit"
+              value="All i do is click, click, click, no matter what"
+            />
           </fieldset>
         </form>
       </section>
