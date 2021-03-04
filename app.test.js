@@ -8,7 +8,6 @@ const customUrlToShort = { url: "https://www.facebook.com", customUrl: "F" };
 
 const expectedUrlError = { error: "invalid url" };
 const urlNotFoundError = { error: "This short url was not found" };
-// const expectedServersError = { error: "There was an error with our servers" };
 const customUrlTakenError = { error: "custom url already taken!" };
 const invalidUrlToShort = { url: "reddit" };
 

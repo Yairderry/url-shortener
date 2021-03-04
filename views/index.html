@@ -4,6 +4,7 @@
   <head>
     <title>URL Shortener</title>
     <link href="./public/style.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
 
   <body>
@@ -35,9 +36,19 @@
               type="submit"
               value="All i do is click, click, click, no matter what"
             />
+            <div class="original_and_short_urls hidden">
+              <input class="original_url" type="text" />
+              <div class="copy_container">
+                <input class="short_url" type="text" />
+                <button class="copy_button">Copy url</button>
+              </div>
+            </div>
           </fieldset>
         </form>
+
+        <button id="short_button">test</button>
       </section>
     </main>
+    <script src="./public/script.js"></script>
   </body>
 </html>
