@@ -1,15 +1,26 @@
 const request = require("supertest");
-const shortUrl = require("./api/shorturl/index.js");
 const app = require("./app.js");
 
-const urlToShort = { url: "https://www.reddit.com" };
-const urlToShort2 = { url: "https://www.google.com" };
-const customUrlToShort = { url: "https://www.facebook.com", customUrl: "F" };
+const urlToShort = {
+  url:
+    "https://www.youtube.com/watch?v=AXhEGyURqXg&ab_channel=SucculentSessions",
+};
+const urlToShort2 = {
+  url: "https://www.youtube.com/watch?v=L0jQz6jqQS0&ab_channel=LastWeekTonight",
+};
+const shortUrlToShort = { url: "https://github.com" };
+const customUrlToShort = {
+  url: "https://www.youtube.com/watch?v=7VG_s2PCH_c&ab_channel=LastWeekTonight",
+  customUrl: "F",
+};
+const invalidUrlToShort = { url: "reddit" };
 
 const expectedUrlError = { error: "invalid url" };
 const urlNotFoundError = { error: "This short url was not found" };
 const customUrlTakenError = { error: "custom url already taken!" };
-const invalidUrlToShort = { url: "reddit" };
+const urlAlreadyShortError = {
+  error: "The url you sent is already shorter than we can provide",
+};
 
 describe("shorturl route", () => {
   describe("POST methods", () => {
@@ -104,6 +115,15 @@ describe("shorturl route", () => {
       expect(response.status).toBe(400);
       expect(response.body).toEqual(expectedUrlError);
     });
+
+    it("Should return an error message with status code 400 for url already shorter than we can provide", async () => {
+      const response = await request(app)
+        .post("/api/shorturl/new")
+        .send(shortUrlToShort);
+
+      // expect(response.status).toBe(400);
+      expect(response.body).toEqual(urlAlreadyShortError);
+    });
   });
 
   describe("GET methods", () => {
@@ -141,31 +161,30 @@ describe("statistic route", () => {
 
       const response4 = await request(app).get(`/api/statistic`);
 
-      const expectedResponse = {
-        urls: [
-          {
-            originalUrl: urlToShort.url,
-            creationDate: response4.body.urls[0].creationDate,
-            shortUrlId: "0",
-            redirectCount: 1,
-          },
-          {
-            originalUrl: urlToShort2.url,
-            creationDate: response4.body.urls[1].creationDate,
-            shortUrlId: "1",
-            redirectCount: 1,
-          },
-          {
-            originalUrl: customUrlToShort.url,
-            creationDate: response4.body.urls[2].creationDate,
-            shortUrlId: "F",
-            redirectCount: 0,
-          },
-        ],
-      };
+      const urls = response4.body;
+      const expectedResponse = [
+        {
+          originalUrl: urlToShort.url,
+          creationDate: urls[0].creationDate,
+          shortUrlId: "0",
+          redirectCount: 1,
+        },
+        {
+          originalUrl: urlToShort2.url,
+          creationDate: urls[1].creationDate,
+          shortUrlId: "1",
+          redirectCount: 1,
+        },
+        {
+          originalUrl: customUrlToShort.url,
+          creationDate: urls[2].creationDate,
+          shortUrlId: "F",
+          redirectCount: 0,
+        },
+      ];
 
       expect(response4.status).toBe(200);
-      expect(response4.body).toEqual(expectedResponse);
+      expect(urls).toEqual(expectedResponse);
     });
 
     it("Should should return the statistics of a specific url", async () => {
@@ -178,7 +197,7 @@ describe("statistic route", () => {
       );
 
       const expectedResponse = {
-        originalUrl: "https://www.reddit.com",
+        originalUrl: urlToShort.url,
         creationDate: response2.body.creationDate,
         shortUrlId: "0",
         redirectCount: 1,

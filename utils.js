@@ -1,3 +1,4 @@
+const shortUrl = require("./api/shorturl.js");
 const database = require("./DB/DataBase.js");
 
 const validUrlCheck = (req, res, next) => {
@@ -42,4 +43,21 @@ const customUrlCheck = (req, res, next) => {
   next();
 };
 
-module.exports = { validUrlCheck, urlCheck, customUrlCheck };
+const isUrlShorterCheck = (req, res, next) => {
+  const customUrl =
+    req.body.customUrl === "" ? database.databaseLength : req.body.customUrl;
+  const origin = req.headers.referer
+    ? req.headers.referer
+    : `http://localhost:${process.env.PORT}/`;
+  const shortUrl = origin + customUrl;
+
+  if (shortUrl.length >= req.body.url.length) {
+    res.status(400).send({
+      error: "The url you sent is already shorter than we can provide",
+    });
+    return;
+  }
+  next();
+};
+
+module.exports = { validUrlCheck, urlCheck, customUrlCheck, isUrlShorterCheck };
