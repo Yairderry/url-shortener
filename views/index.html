@@ -12,41 +12,41 @@
     <h2>You got a big URL? Not anymore you don't!</h2>
     <main>
       <section>
-        <form action="/api/shorturl/new" method="POST">
-          <fieldset class="container">
-            <label for="url_input">Put your damn URL in there!</label>
+        <div class="container">
+          <label for="url_input">Put your damn URL in there!</label>
+          <input
+            id="url_input"
+            type="text"
+            name="url"
+            placeholder="Anything but pornhub please..."
+          />
+          <label for="custom-url-input">You can choose your own name</label>
+          <div id="custom_url">
+            <span>localhost:PORT/api/shortrul/</span>
+
             <input
-              id="url_input"
+              id="custom_url_input"
               type="text"
-              name="url"
-              placeholder="Anything but pornhub please..."
+              name="customUrl"
+              placeholder="Shits n' giggles"
             />
-            <label for="custom-url-input">You can choose your own name</label>
-            <div id="custom_url">
-              <span>localhost:PORT/api/shortrul/</span>
-
-              <input
-                id="custom_url_input"
-                type="text"
-                name="customUrl"
-                placeholder="Shits n' giggles"
-              />
+          </div>
+          <input
+            id="short_button"
+            type="submit"
+            value="All i do is click, click, click, no matter what"
+          />
+          <div class="original_and_short_urls hidden">
+            <div class="line"></div>
+            <label for="original_url">Original url</label>
+            <input class="original_url" type="text" />
+            <label for="short_url">Shortened url</label>
+            <div class="copy_container">
+              <input class="short_url" type="text" />
+              <button class="copy_button">Copy url</button>
             </div>
-            <input
-              type="submit"
-              value="All i do is click, click, click, no matter what"
-            />
-            <div class="original_and_short_urls hidden">
-              <input class="original_url" type="text" />
-              <div class="copy_container">
-                <input class="short_url" type="text" />
-                <button class="copy_button">Copy url</button>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-
-        <button id="short_button">test</button>
+          </div>
+        </div>
       </section>
     </main>
     <script src="./public/script.js"></script>

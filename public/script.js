@@ -17,7 +17,7 @@ function postNewUrl(e) {
   axios
     .post(`${window.location.origin}/api/shorturl/new`, data)
     .then((res) => addUrlsToHTML(res.data))
-    .catch((err) => console.log(err));
+    .catch((err) => alert(`${err.response.data.error}`));
 }
 
 function addUrlsToHTML(data) {
