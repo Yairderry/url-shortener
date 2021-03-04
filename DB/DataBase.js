@@ -13,7 +13,7 @@ class DataBase {
     this.urls = [];
   }
 
-  getData(url) {
+  init(url) {
     axios
       .get(url, { headers: HEADERS })
       .then((res) => {
@@ -28,7 +28,7 @@ class DataBase {
       .catch((err) => console.log(err));
   }
 
-  setData(url) {
+  backupToExternalService(url) {
     axios
       .put(url, { body: this }, { headers: HEADERS })
       .then((res) => {
@@ -44,20 +44,28 @@ class DataBase {
       shortUrlId
     );
     this.urls.push(url);
-    this.setData(process.env.DB_URL);
+    this.backupToExternalService(process.env.DB_URL);
     return url;
   }
 
-  findUrl(originalUrl, shortUrlId) {
-    const urlByOriginalUrl = this.urls.filter(
+  findByOriginalUrl(originalUrl) {
+    const urlByOriginalUrl = this.urls.find(
       (url) => url.originalUrl === originalUrl
-    )[0];
-    const urlByShortUrlId = this.urls.filter(
-      (url) => url.shortUrlId.toString() === shortUrlId
-    )[0];
+    );
 
     if (urlByOriginalUrl) return urlByOriginalUrl;
+  }
+
+  findByShortUrlId(shortUrlId) {
+    const urlByShortUrlId = this.urls.find(
+      (url) => url.shortUrlId === shortUrlId
+    );
+
     if (urlByShortUrlId) return urlByShortUrlId;
+  }
+
+  get databaseLength() {
+    return this.urls.length.toString();
   }
 
   static dateToSqlFormat = (givenDate = null) => {
@@ -83,6 +91,6 @@ class DataBase {
 }
 
 const database = new DataBase();
-database.getData(process.env.DB_URL);
+database.init(process.env.DB_URL);
 
 module.exports = database;

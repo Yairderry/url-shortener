@@ -7,13 +7,13 @@ statistic.use(express.json());
 statistic.use(express.urlencoded());
 
 statistic.get("/", (req, res) => {
-  res.status(200).json(database);
+  res.status(200).json(database.urls);
 });
 
 statistic.get("/:id", (req, res) => {
   const { id } = req.params;
 
-  const url = database.findUrl(null, id);
+  const url = database.findByShortUrlId(id);
   if (!url) {
     res.status(404).json({ error: "This short url was not found" });
   } else {

@@ -16,7 +16,7 @@ const validUrlCheck = (req, res, next) => {
 const urlCheck = (req, res, next) => {
   const { id } = req.params;
 
-  const url = database.findUrl(null, id);
+  const url = database.findByShortUrlId(id);
   if (!url) {
     res.status(404).json({ error: "This short url was not found" });
   } else {
@@ -33,7 +33,7 @@ const customUrlCheck = (req, res, next) => {
     return;
   }
 
-  const theCustomUrl = database.findUrl(null, customUrl);
+  const theCustomUrl = database.findByShortUrlId(customUrl);
 
   if (theCustomUrl) {
     res.status(400).send({ error: "custom url already taken!" });
