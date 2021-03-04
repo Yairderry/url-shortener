@@ -1,4 +1,4 @@
-const database = require("./classes");
+const database = require("./DB/DataBase.js");
 
 const validUrlCheck = (req, res, next) => {
   const { url } = req.body;

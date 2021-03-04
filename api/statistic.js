@@ -1,11 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-const database = require("../../classes.js");
+const database = require("../DB/DataBase.js");
 const statistic = express.Router();
 
 statistic.use(express.json());
 statistic.use(express.urlencoded());
-// statistic.use("/public", express.static(`./public`));
 
 statistic.get("/", (req, res) => {
   res.status(200).json(database);
