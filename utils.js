@@ -1,4 +1,3 @@
-const shortUrl = require("./api/shorturl.js");
 const database = require("./DB/DataBase.js");
 
 const validUrlCheck = (req, res, next) => {

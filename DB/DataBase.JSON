@@ -1,0 +1,30 @@
+{
+    "filePath": "./DB/DataBase.JSON",
+    "backupPath": "https://api.jsonbin.io/v3/b/6040052281087a6a8b95b68f",
+    "urls": [
+        {
+            "originalUrl": "https://www.youtube.com/watch?v=AXhEGyURqXg&ab_channel=SucculentSessions",
+            "creationDate": "2021-03-05 14:28:09",
+            "shortUrlId": "0",
+            "redirectCount": 3
+        },
+        {
+            "originalUrl": "https://www.youtube.com/watch?v=L0jQz6jqQS0&ab_channel=LastWeekTonight",
+            "creationDate": "2021-03-05 14:28:09",
+            "shortUrlId": "1",
+            "redirectCount": 1
+        },
+        {
+            "originalUrl": "https://www.youtube.com/watch?v=7VG_s2PCH_c&ab_channel=LastWeekTonight",
+            "creationDate": "2021-03-05 14:28:09",
+            "shortUrlId": "F",
+            "redirectCount": 0
+        },
+        {
+            "originalUrl": "https://www.reddit.com/r/oddlysatisfying/comments/dtwf8v/the_way_this_mango_flavored_soda_can_cake_is/?utm_medium=android_app&utm_source=share",
+            "creationDate": "2021-03-05 14:30:54",
+            "shortUrlId": "3",
+            "redirectCount": 0
+        }
+    ]
+}

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const axios = require("axios").default;
+const fsPromise = require("fs/promises");
 const UrlData = require("./UrlData");
 
 const HEADERS = {
@@ -9,15 +10,17 @@ const HEADERS = {
 };
 
 class DataBase {
-  constructor() {
+  constructor(path, backupPath) {
+    this.filePath = path;
+    this.backupPath = backupPath;
     this.urls = [];
   }
-
-  init(url) {
-    axios
-      .get(url, { headers: HEADERS })
+  init() {
+    fsPromise
+      .readFile(this.filePath)
       .then((res) => {
-        res.data.record.body.urls.forEach(
+        const data = JSON.parse(res);
+        data.urls.forEach(
           ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
             this.urls.push(
               new UrlData(originalUrl, creationDate, shortUrlId, redirectCount)
@@ -25,15 +28,40 @@ class DataBase {
           }
         );
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        axios
+          .get(this.backupPath, { headers: HEADERS })
+          .then((res) => {
+            res.data.record.body.urls.forEach(
+              ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
+                this.urls.push(
+                  new UrlData(
+                    originalUrl,
+                    creationDate,
+                    shortUrlId,
+                    redirectCount
+                  )
+                );
+              }
+            );
+          })
+          .catch((err) => console.log(err));
+      });
   }
 
-  backupToExternalService(url) {
+  updateData() {
+    fsPromise
+      .writeFile(this.filePath, JSON.stringify(this, null, 4))
+      .then((res) => console.log(res))
+      .catch((err) => {
+        return axios
+          .put(this.backupPath, { body: this }, { headers: HEADERS })
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      });
     axios
-      .put(url, { body: this }, { headers: HEADERS })
-      .then((res) => {
-        console.log(res);
-      })
+      .put(this.backupPath, { body: this }, { headers: HEADERS })
+      .then((res) => console.log(res))
       .catch((err) => console.log(err));
   }
 
@@ -44,7 +72,8 @@ class DataBase {
       shortUrlId
     );
     this.urls.push(url);
-    this.backupToExternalService(process.env.DB_URL);
+    // this.backupToExternalService(process.env.DB_URL);
+    this.updateData("./DB/DataBase.JSON");
     return url;
   }
 
@@ -90,7 +119,6 @@ class DataBase {
   };
 }
 
-const database = new DataBase();
-database.init(process.env.DB_URL);
-
+const database = new DataBase("./DB/DataBase.JSON", process.env.DB_URL);
+database.init();
 module.exports = database;

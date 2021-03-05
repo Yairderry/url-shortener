@@ -26,14 +26,14 @@ shortUrl.post(
 
     const theUrl = database.findByOriginalUrl(url);
 
+    const newUrl = theUrl
+      ? theUrl
+      : database.addUrl(url, new Date(), customUrl);
+    res.status(200).json({
+      original_url: newUrl.originalUrl,
+      short_url: newUrl.shortUrlId,
+    });
     try {
-      const newUrl = theUrl
-        ? theUrl
-        : database.addUrl(url, new Date(), customUrl);
-      res.status(200).json({
-        original_url: newUrl.originalUrl,
-        short_url: newUrl.shortUrlId,
-      });
     } catch (e) {
       res.status(500).send({ error: "There was an error with our servers" });
     }
@@ -48,7 +48,8 @@ shortUrl.get("/:id", urlCheck, (req, res) => {
   url.redirectCount++;
 
   try {
-    database.backupToExternalService(process.env.DB_URL);
+    // database.backupToExternalService(process.env.DB_URL);
+    database.updateData("./DB/DataBase.JSON");
   } catch (e) {
     res.status(500).send({ error: "There was an error with our servers" });
   }
