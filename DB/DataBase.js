@@ -10,10 +10,10 @@ const HEADERS = {
 };
 
 class DataBase {
-  constructor(path, backupPath) {
+  constructor(path, backupPath, totalUrls = 0) {
     this.filePath = path;
     this.backupPath = backupPath;
-    this.urls = [];
+    this.totalUrls = totalUrls;
   }
 
   init() {
@@ -21,55 +21,57 @@ class DataBase {
       .readFile(this.filePath)
       .then((res) => {
         const data = JSON.parse(res);
-        data.urls.forEach(
-          ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
-            this.urls.push(
-              new UrlData(originalUrl, creationDate, shortUrlId, redirectCount)
-            );
-          }
-        );
+        this.totalUrls = data.length;
+        // data.urls.forEach(
+        //   ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
+        //     this.urls.push(
+        //       new UrlData(originalUrl, creationDate, shortUrlId, redirectCount)
+        //     );
+        //   }
+        // );
       })
       .catch((err) => {
         axios
           .get(this.backupPath, { headers: HEADERS })
           .then((res) => {
-            res.data.record.body.urls.forEach(
-              ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
-                this.urls.push(
-                  new UrlData(
-                    originalUrl,
-                    creationDate,
-                    shortUrlId,
-                    redirectCount
-                  )
-                );
-              }
-            );
+            this.totalUrls = res.data.record.body.length;
+            // res.data.record.body.urls.forEach(
+            //   ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
+            //     this.urls.push(
+            //       new UrlData(
+            //         originalUrl,
+            //         creationDate,
+            //         shortUrlId,
+            //         redirectCount
+            //       )
+            //     );
+            //   }
+            // );
           })
           .catch((err) => console.log(err));
       });
   }
 
-  updateData() {
+  updateData(data) {
     fsPromise
-      .writeFile(this.filePath, JSON.stringify(this, null, 4))
+      .writeFile(this.filePath, JSON.stringify(data, null, 4))
       .then((res) => console.log(res))
       .catch((err) => {
         return axios
-          .put(this.backupPath, { body: this }, { headers: HEADERS })
+          .put(this.backupPath, { body: data }, { headers: HEADERS })
           .then((res) => console.log(res))
           .catch((err) => console.log(err));
       });
 
     axios
-      .put(this.backupPath, { body: this }, { headers: HEADERS })
+      .put(this.backupPath, { body: data }, { headers: HEADERS })
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   }
 
   getAllUrls() {
     return fsPromise.readFile(this.filePath).then((data) => {
-      const { urls } = JSON.parse(data);
+      const urls = data === "[]" ? [] : JSON.parse(data);
       return urls;
     });
   }
@@ -82,32 +84,76 @@ class DataBase {
     });
   }
 
-  addUrl(originalUrl, date = new Date(), shortUrlId = this.urls.length) {
+  findByOriginalUrlWithFile(originalUrl) {
+    return this.getAllUrls().then((urls) => {
+      const urlByOriginalUrl = urls.find(
+        (url) => url.originalUrl === originalUrl
+      );
+
+      if (urlByOriginalUrl) return urlByOriginalUrl;
+    });
+  }
+
+  updateUrlData(newUrl) {
+    return this.getAllUrls().then((urls) => {
+      const urlByShortUrlId = urls.find(
+        (url) => url.shortUrlId === newUrl.shortUrlId
+      );
+
+      if (urlByShortUrlId) {
+        for (let prop in urlByShortUrlId) {
+          urlByShortUrlId[prop] = newUrl[prop];
+        }
+      }
+
+      this.updateData(urls);
+    });
+  }
+
+  addUrlToFile(originalUrl, date = new Date(), shortUrlId = this.urls) {
     const url = new UrlData(
       originalUrl,
       DataBase.dateToSqlFormat(date),
       shortUrlId
     );
-    this.urls.push(url);
-    this.updateData("./DB/DataBase.JSON");
+
+    this.getAllUrls().then((urls) => {
+      urls.push(url);
+      this.totalUrls++;
+      this.updateData(urls);
+    });
+
     return url;
   }
+  // // old methods
+  // addUrl(originalUrl, date = new Date(), shortUrlId = this.urls.length) {
+  //   const url = new UrlData(
+  //     originalUrl,
+  //     DataBase.dateToSqlFormat(date),
+  //     shortUrlId
+  //   );
+  //   this.urls.push(url);
+  //   this.updateData();
+  //   return url;
+  // }
 
-  findByOriginalUrl(originalUrl) {
-    const urlByOriginalUrl = this.urls.find(
-      (url) => url.originalUrl === originalUrl
-    );
+  // findByOriginalUrl(originalUrl) {
+  //   this.getAllUrls().then((urls) => {
+  //     const urlByOriginalUrl = urls.find(
+  //       (url) => url.originalUrl === originalUrl
+  //     );
 
-    if (urlByOriginalUrl) return urlByOriginalUrl;
-  }
+  //     if (urlByOriginalUrl) return urlByOriginalUrl;
+  //   });
+  // }
 
-  findByShortUrlId(shortUrlId) {
-    const urlByShortUrlId = this.urls.find(
-      (url) => url.shortUrlId === shortUrlId
-    );
+  // findByShortUrlId(shortUrlId) {
+  //   this.getAllUrls().then((urls) => {
+  //     const urlByShortUrlId = urls.find((url) => url.shortUrlId === shortUrlId);
 
-    if (urlByShortUrlId) return urlByShortUrlId;
-  }
+  //     if (urlByShortUrlId) return urlByShortUrlId;
+  //   });
+  // }
 
   static dateToSqlFormat = (givenDate = null) => {
     const date = givenDate ? new Date(givenDate) : new Date();
@@ -131,6 +177,6 @@ class DataBase {
   };
 }
 
-const database = new DataBase("./DB/DataBase.JSON", process.env.DB_URL);
+const database = new DataBase("./DB/UrlsDB.JSON", process.env.DB_URL);
 database.init();
 module.exports = database;

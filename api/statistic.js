@@ -21,10 +21,11 @@ statistic.get("/:id", (req, res) => {
   const { id } = req.params;
 
   database.findByShortUrlIdWithFile(id).then((url) => {
-    if (!url) {
+    const theUrl = url;
+    if (!theUrl) {
       res.status(404).json({ error: "This short url was not found" });
     } else {
-      res.status(200).json(url);
+      res.status(200).json(theUrl);
     }
   });
 });

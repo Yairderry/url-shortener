@@ -4,11 +4,13 @@ const app = require("./app.js");
 const urlToShort = {
   url:
     "https://www.youtube.com/watch?v=AXhEGyURqXg&ab_channel=SucculentSessions",
+  customUrl: "",
 };
 const urlToShort2 = {
   url: "https://www.youtube.com/watch?v=L0jQz6jqQS0&ab_channel=LastWeekTonight",
+  customUrl: "",
 };
-const shortUrlToShort = { url: "https://github.com" };
+const shortUrlToShort = { url: "https://github.com", customUrl: "" };
 const customUrlToShort = {
   url: "https://www.youtube.com/watch?v=7VG_s2PCH_c&ab_channel=LastWeekTonight",
   customUrl: "F",
@@ -121,7 +123,7 @@ describe("shorturl route", () => {
         .post("/api/shorturl/new")
         .send(shortUrlToShort);
 
-      // expect(response.status).toBe(400);
+      expect(response.status).toBe(400);
       expect(response.body).toEqual(urlAlreadyShortError);
     });
   });

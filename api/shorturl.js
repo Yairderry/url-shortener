@@ -22,16 +22,17 @@ shortUrl.post(
   (req, res) => {
     const { url } = req.body;
     const customUrl =
-      req.body.customUrl === "" ? undefined : req.body.customUrl;
+      req.body.customUrl === "" ? database.totalUrls : req.body.customUrl;
 
-    const theUrl = database.findByOriginalUrl(url);
-
-    const newUrl = theUrl
-      ? theUrl
-      : database.addUrl(url, new Date(), customUrl);
-    res.status(200).json({
-      original_url: newUrl.originalUrl,
-      short_url: newUrl.shortUrlId,
+    database.findByOriginalUrlWithFile(url).then((theUrl) => {
+      const newUrl = theUrl
+        ? theUrl
+        : database.addUrlToFile(url, new Date(), customUrl);
+      console.log(newUrl);
+      res.status(200).json({
+        original_url: newUrl.originalUrl,
+        short_url: newUrl.shortUrlId,
+      });
     });
   }
 );
@@ -39,18 +40,18 @@ shortUrl.post(
 shortUrl.get("/:id", urlCheck, (req, res) => {
   const { id } = req.params;
 
-  const url = database.findByShortUrlId(id);
-
-  url.redirectCount++;
-
-  try {
-    // database.backupToExternalService(process.env.DB_URL);
-    database.updateData("./DB/DataBase.JSON");
-  } catch (e) {
-    res.status(500).send({ error: "There was an error with our servers" });
-  }
-  res.writeHead(302, { Location: url.originalUrl });
-  res.end();
+  database
+    .findByShortUrlIdWithFile(id)
+    .then((url) => {
+      url.redirectCount++;
+      database.updateUrlData(url).then((response) => {
+        res.writeHead(302, { Location: url.originalUrl });
+        res.end();
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ error: "There was an error with our servers" });
+    });
 });
 
 module.exports = shortUrl;
