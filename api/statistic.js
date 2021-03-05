@@ -7,18 +7,26 @@ statistic.use(express.json());
 statistic.use(express.urlencoded());
 
 statistic.get("/", (req, res) => {
-  res.status(200).json(database.urls);
+  database
+    .getAllUrls()
+    .then((urls) => {
+      res.status(200).json(urls);
+    })
+    .catch((err) => {
+      res.status(500).send({ error: "There was an error with our servers" });
+    });
 });
 
 statistic.get("/:id", (req, res) => {
   const { id } = req.params;
 
-  const url = database.findByShortUrlId(id);
-  if (!url) {
-    res.status(404).json({ error: "This short url was not found" });
-  } else {
-    res.status(200).json(url);
-  }
+  database.findByShortUrlIdWithFile(id).then((url) => {
+    if (!url) {
+      res.status(404).json({ error: "This short url was not found" });
+    } else {
+      res.status(200).json(url);
+    }
+  });
 });
 
 module.exports = statistic;

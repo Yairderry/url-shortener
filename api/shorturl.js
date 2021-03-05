@@ -33,10 +33,6 @@ shortUrl.post(
       original_url: newUrl.originalUrl,
       short_url: newUrl.shortUrlId,
     });
-    try {
-    } catch (e) {
-      res.status(500).send({ error: "There was an error with our servers" });
-    }
   }
 );
 

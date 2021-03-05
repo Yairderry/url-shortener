@@ -15,6 +15,7 @@ class DataBase {
     this.backupPath = backupPath;
     this.urls = [];
   }
+
   init() {
     fsPromise
       .readFile(this.filePath)
@@ -59,10 +60,26 @@ class DataBase {
           .then((res) => console.log(res))
           .catch((err) => console.log(err));
       });
+
     axios
       .put(this.backupPath, { body: this }, { headers: HEADERS })
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
+  }
+
+  getAllUrls() {
+    return fsPromise.readFile(this.filePath).then((data) => {
+      const { urls } = JSON.parse(data);
+      return urls;
+    });
+  }
+
+  findByShortUrlIdWithFile(shortUrlId) {
+    return this.getAllUrls().then((urls) => {
+      const urlByShortUrlId = urls.find((url) => url.shortUrlId === shortUrlId);
+
+      if (urlByShortUrlId) return urlByShortUrlId;
+    });
   }
 
   addUrl(originalUrl, date = new Date(), shortUrlId = this.urls.length) {
@@ -72,7 +89,6 @@ class DataBase {
       shortUrlId
     );
     this.urls.push(url);
-    // this.backupToExternalService(process.env.DB_URL);
     this.updateData("./DB/DataBase.JSON");
     return url;
   }
@@ -91,10 +107,6 @@ class DataBase {
     );
 
     if (urlByShortUrlId) return urlByShortUrlId;
-  }
-
-  get databaseLength() {
-    return this.urls.length.toString();
   }
 
   static dateToSqlFormat = (givenDate = null) => {
