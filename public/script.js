@@ -1,6 +1,6 @@
 const shortenButton = document.querySelector("#short_button");
-const searchButton = document.querySelector("#search_button");
-const searchAllButton = document.querySelector("#sreach_all_button");
+const searchButton = document.querySelector(".search_button");
+const searchAllButton = document.querySelector(".search_all_button");
 const currentOrigin = document.querySelector("#custom_url span");
 const navbar = document.querySelector("#navbar");
 
@@ -8,8 +8,69 @@ currentOrigin.textContent = `${window.location.origin}/api/shorturl/`;
 
 shortenButton.addEventListener("click", postNewUrl);
 navbar.addEventListener("click", switchTabs);
+searchAllButton.addEventListener("click", addAllStatistics);
+searchButton.addEventListener("click", addStatistics);
+
+function addStatistics(event) {
+  const table = document.querySelector("tbody");
+
+  while (table.childNodes.length > 2) {
+    table.removeChild(table.lastChild);
+  }
+
+  const searchInput = document.querySelector(".search_container input");
+  const shortUrlId = searchInput.value;
+
+  axios
+    .get(`${window.location.origin}/api/statistic/${shortUrlId}`)
+    .then((statistic) => createTableRow(statistic.data))
+    .catch((err) => {
+      alert(`${err.response.data.error}`);
+    });
+
+  searchInput.value = "";
+}
+
+function addAllStatistics(event) {
+  const table = document.querySelector("tbody");
+
+  while (table.childNodes.length > 2) {
+    table.removeChild(table.lastChild);
+  }
+
+  axios
+    .get(`${window.location.origin}/api/statistic`)
+    .then((statistics) => {
+      statistics.data.forEach((statistic) => createTableRow(statistic));
+    })
+    .catch((err) => {
+      alert(`${err.response.data.error}`);
+    });
+}
 
 // Printing elements to HTML
+function createTableRow(rowData) {
+  const table = document.querySelector("tbody");
+
+  const row = document.createElement("tr");
+
+  const originalUrl = document.createElement("td");
+  originalUrl.textContent = rowData.originalUrl;
+
+  const creationDate = document.createElement("td");
+  creationDate.textContent = rowData.creationDate;
+
+  const shortUrlId = document.createElement("td");
+  shortUrlId.textContent = rowData.shortUrlId;
+
+  const redirectCount = document.createElement("td");
+  redirectCount.textContent = rowData.redirectCount;
+
+  row.append(originalUrl, creationDate, shortUrlId, redirectCount);
+
+  table.append(row);
+}
+
 function addUrlsToHTML(data) {
   const originalUrl = document.querySelector(".original_url");
   const shortUrl = document.querySelector(".short_url");

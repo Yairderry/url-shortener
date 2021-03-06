@@ -39,7 +39,7 @@ describe("shorturl route", () => {
         short_url: "0",
       };
 
-      // expect(response.status).toBe(200);
+      expect(response.status).toBe(200);
       expect(response.body).toEqual(expectedResponse);
     });
 

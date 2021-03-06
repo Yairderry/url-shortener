@@ -182,3 +182,12 @@ input[type="submit"] {
   border-radius: 5px;
   font-size: 20px;
 }
+
+.statistics,
+tbody {
+  width: 100%;
+}
+
+tr {
+  max-width: 60vw;
+}
