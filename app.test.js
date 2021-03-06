@@ -6,11 +6,14 @@ const urlToShort = {
     "https://www.youtube.com/watch?v=AXhEGyURqXg&ab_channel=SucculentSessions",
   customUrl: "",
 };
+
 const urlToShort2 = {
   url: "https://www.youtube.com/watch?v=L0jQz6jqQS0&ab_channel=LastWeekTonight",
   customUrl: "",
 };
+
 const shortUrlToShort = { url: "https://github.com", customUrl: "" };
+
 const customUrlToShort = {
   url: "https://www.youtube.com/watch?v=7VG_s2PCH_c&ab_channel=LastWeekTonight",
   customUrl: "F",
@@ -41,11 +44,7 @@ describe("shorturl route", () => {
     });
 
     it("Should not create a new short url when entering the same url", async () => {
-      const response1 = await request(app)
-        .post("/api/shorturl/new")
-        .send(urlToShort);
-
-      const response2 = await request(app)
+      const response = await request(app)
         .post("/api/shorturl/new")
         .send(urlToShort);
 
@@ -54,36 +53,22 @@ describe("shorturl route", () => {
         short_url: "0",
       };
 
-      expect(response1.status).toBe(200);
-      expect(response1.body).toEqual(expectedResponse);
-
-      expect(response2.status).toBe(200);
-      expect(response2.body).toEqual(expectedResponse);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(expectedResponse);
     });
 
     test("If second short url received === first short url received + 1", async () => {
-      const response1 = await request(app)
-        .post("/api/shorturl/new")
-        .send(urlToShort);
-
-      const response2 = await request(app)
+      const response = await request(app)
         .post("/api/shorturl/new")
         .send(urlToShort2);
 
       const expectedResponse = {
-        original_url: urlToShort.url,
-        short_url: "0",
-      };
-      const expectedResponse2 = {
         original_url: urlToShort2.url,
         short_url: "1",
       };
 
-      expect(response1.status).toBe(200);
-      expect(response1.body).toEqual(expectedResponse);
-
-      expect(response2.status).toBe(200);
-      expect(response2.body).toEqual(expectedResponse2);
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(expectedResponse);
     });
 
     it("Should create a new custom short url", async () => {

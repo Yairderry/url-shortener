@@ -17,10 +17,10 @@ statistic.get("/", (req, res) => {
     });
 });
 
-statistic.get("/:id", (req, res) => {
-  const { id } = req.params;
+statistic.get("/:shortUrlId", (req, res) => {
+  const { shortUrlId } = req.params;
 
-  database.findByShortUrlIdWithFile(id).then((url) => {
+  database.findByShortUrlId(shortUrlId).then((url) => {
     const theUrl = url;
     if (!theUrl) {
       res.status(404).json({ error: "This short url was not found" });

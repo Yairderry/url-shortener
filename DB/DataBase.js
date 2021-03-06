@@ -22,31 +22,12 @@ class DataBase {
       .then((res) => {
         const data = JSON.parse(res);
         this.totalUrls = data.length;
-        // data.urls.forEach(
-        //   ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
-        //     this.urls.push(
-        //       new UrlData(originalUrl, creationDate, shortUrlId, redirectCount)
-        //     );
-        //   }
-        // );
       })
       .catch((err) => {
         axios
           .get(this.backupPath, { headers: HEADERS })
           .then((res) => {
             this.totalUrls = res.data.record.body.length;
-            // res.data.record.body.urls.forEach(
-            //   ({ originalUrl, redirectCount, shortUrlId, creationDate }) => {
-            //     this.urls.push(
-            //       new UrlData(
-            //         originalUrl,
-            //         creationDate,
-            //         shortUrlId,
-            //         redirectCount
-            //       )
-            //     );
-            //   }
-            // );
           })
           .catch((err) => console.log(err));
       });
@@ -70,13 +51,15 @@ class DataBase {
   }
 
   getAllUrls() {
-    return fsPromise.readFile(this.filePath).then((data) => {
-      const urls = data === "[]" ? [] : JSON.parse(data);
-      return urls;
-    });
+    return fsPromise
+      .readFile(this.filePath, { encoding: "utf-8", flag: "r" })
+      .then((data) => {
+        const urls = data === "" ? [] : JSON.parse(data);
+        return urls;
+      });
   }
 
-  findByShortUrlIdWithFile(shortUrlId) {
+  findByShortUrlId(shortUrlId) {
     return this.getAllUrls().then((urls) => {
       const urlByShortUrlId = urls.find((url) => url.shortUrlId === shortUrlId);
 
@@ -84,7 +67,7 @@ class DataBase {
     });
   }
 
-  findByOriginalUrlWithFile(originalUrl) {
+  findByOriginalUrl(originalUrl) {
     return this.getAllUrls().then((urls) => {
       const urlByOriginalUrl = urls.find(
         (url) => url.originalUrl === originalUrl
@@ -110,50 +93,20 @@ class DataBase {
     });
   }
 
-  addUrlToFile(originalUrl, date = new Date(), shortUrlId = this.urls) {
+  addUrl(originalUrl, date = new Date(), shortUrlId = this.urls) {
     const url = new UrlData(
       originalUrl,
       DataBase.dateToSqlFormat(date),
       shortUrlId
     );
 
-    this.getAllUrls().then((urls) => {
+    return this.getAllUrls().then((urls) => {
       urls.push(url);
       this.totalUrls++;
       this.updateData(urls);
+      return url;
     });
-
-    return url;
   }
-  // // old methods
-  // addUrl(originalUrl, date = new Date(), shortUrlId = this.urls.length) {
-  //   const url = new UrlData(
-  //     originalUrl,
-  //     DataBase.dateToSqlFormat(date),
-  //     shortUrlId
-  //   );
-  //   this.urls.push(url);
-  //   this.updateData();
-  //   return url;
-  // }
-
-  // findByOriginalUrl(originalUrl) {
-  //   this.getAllUrls().then((urls) => {
-  //     const urlByOriginalUrl = urls.find(
-  //       (url) => url.originalUrl === originalUrl
-  //     );
-
-  //     if (urlByOriginalUrl) return urlByOriginalUrl;
-  //   });
-  // }
-
-  // findByShortUrlId(shortUrlId) {
-  //   this.getAllUrls().then((urls) => {
-  //     const urlByShortUrlId = urls.find((url) => url.shortUrlId === shortUrlId);
-
-  //     if (urlByShortUrlId) return urlByShortUrlId;
-  //   });
-  // }
 
   static dateToSqlFormat = (givenDate = null) => {
     const date = givenDate ? new Date(givenDate) : new Date();

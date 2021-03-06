@@ -24,24 +24,30 @@ shortUrl.post(
     const customUrl =
       req.body.customUrl === "" ? database.totalUrls : req.body.customUrl;
 
-    database.findByOriginalUrlWithFile(url).then((theUrl) => {
-      const newUrl = theUrl
-        ? theUrl
-        : database.addUrlToFile(url, new Date(), customUrl);
-      console.log(newUrl);
-      res.status(200).json({
-        original_url: newUrl.originalUrl,
-        short_url: newUrl.shortUrlId,
+    database.findByOriginalUrl(url).then((theUrl) => {
+      if (theUrl) {
+        res.status(200).json({
+          original_url: theUrl.originalUrl,
+          short_url: theUrl.shortUrlId,
+        });
+        return;
+      }
+
+      database.addUrl(url, new Date(), customUrl).then((addedUrl) => {
+        res.status(200).json({
+          original_url: addedUrl.originalUrl,
+          short_url: addedUrl.shortUrlId,
+        });
       });
     });
   }
 );
 
-shortUrl.get("/:id", urlCheck, (req, res) => {
-  const { id } = req.params;
+shortUrl.get("/:shortUrlId", urlCheck, (req, res) => {
+  const { shortUrlId } = req.params;
 
   database
-    .findByShortUrlIdWithFile(id)
+    .findByShortUrlId(shortUrlId)
     .then((url) => {
       url.redirectCount++;
       database.updateUrlData(url).then((response) => {

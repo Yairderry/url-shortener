@@ -14,9 +14,9 @@ const validUrlCheck = (req, res, next) => {
 };
 
 const urlCheck = (req, res, next) => {
-  const { id } = req.params;
+  const { shortUrlId } = req.params;
 
-  database.findByShortUrlIdWithFile(id).then((url) => {
+  database.findByShortUrlId(shortUrlId).then((url) => {
     if (!url) {
       res.status(404).json({ error: "This short url was not found" });
     } else {
@@ -34,7 +34,7 @@ const customUrlCheck = (req, res, next) => {
     return;
   }
 
-  database.findByShortUrlIdWithFile(customUrl).then((url) => {
+  database.findByShortUrlId(customUrl).then((url) => {
     const theCustomUrl = url;
     if (theCustomUrl) {
       res.status(400).send({ error: "custom url already taken!" });

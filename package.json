@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest app.test.js --verbose"
+    "test": "jest app.test.js --verbose --runInBand"
   },
   "dependencies": {
     "axios": "^0.21.1",
