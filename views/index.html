@@ -11,6 +11,10 @@
     <h1>Short The Fuck Up!</h1>
     <h2>You got a big URL? Not anymore you don't!</h2>
     <main>
+      <ul id="navbar">
+        <li id="shorten">shorten</li>
+        <li id="statistic">statistic</li>
+      </ul>
       <section>
         <div class="container">
           <label for="url_input">Put your damn URL in there!</label>
@@ -46,6 +50,28 @@
               <button class="copy_button">Copy url</button>
             </div>
           </div>
+        </div>
+        <div class="container wide hidden">
+          <div class="search_bar">
+            <div class="search_container">
+              <input
+                class="short_url"
+                type="text"
+                placeholder="Give me a short URL ID  and you'll get their stats"
+              />
+              <button class="search_button">Search</button>
+            </div>
+            <button class="search_all_button">All stats</button>
+          </div>
+          <div class="line"></div>
+          <table class="statistics">
+            <tr>
+              <th>Original URL</th>
+              <th>Short URL ID</th>
+              <th>Creation Date</th>
+              <th>Redirect Count</th>
+            </tr>
+          </table>
         </div>
       </section>
     </main>

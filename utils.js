@@ -13,20 +13,19 @@ const validUrlCheck = (req, res, next) => {
   }
 };
 
-const urlCheck = (req, res, next) => {
+const urlCheck = async (req, res, next) => {
   const { shortUrlId } = req.params;
 
-  database.findByShortUrlId(shortUrlId).then((url) => {
-    if (!url) {
-      res.status(404).json({ error: "This short url was not found" });
-    } else {
-      next();
-      return;
-    }
-  });
+  const url = await database.findByShortUrlId(shortUrlId);
+  if (!url) {
+    res.status(404).json({ error: "This short url was not found" });
+  } else {
+    next();
+    return;
+  }
 };
 
-const customUrlCheck = (req, res, next) => {
+const customUrlCheck = async (req, res, next) => {
   const customUrl = req.body.customUrl === "" ? undefined : req.body.customUrl;
 
   if (customUrl === undefined) {
@@ -34,19 +33,17 @@ const customUrlCheck = (req, res, next) => {
     return;
   }
 
-  database.findByShortUrlId(customUrl).then((url) => {
-    const theCustomUrl = url;
-    if (theCustomUrl) {
-      res.status(400).send({ error: "custom url already taken!" });
-      return;
-    }
-    next();
-  });
+  const url = await database.findByShortUrlId(customUrl);
+  if (url) {
+    res.status(400).send({ error: "custom url already taken!" });
+    return;
+  }
+  next();
 };
 
 const isUrlShorterCheck = (req, res, next) => {
   const customUrl =
-    req.body.customUrl === "" ? database.databaseLength : req.body.customUrl;
+    req.body.customUrl === "" ? database.totalUrls : req.body.customUrl;
   const origin = req.headers.referer
     ? req.headers.referer
     : `http://localhost:${process.env.PORT}/`;

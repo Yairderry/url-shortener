@@ -9,6 +9,10 @@ body {
   color: #222;
   background-color: #fff;
   line-height: 1.4em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 h1 {
@@ -24,9 +28,18 @@ h2 {
   margin: 10px;
 }
 
-main {
-  padding: 0;
-  margin-top: 40px;
+#navbar {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+li {
+  list-style: none;
+  padding: 7px 25px;
+  margin: 10px 80px;
+  border-radius: 5px;
+  border: 1px solid black;
 }
 
 .container {
@@ -40,12 +53,17 @@ main {
   align-items: center;
 }
 
+.wide {
+  width: 60vw;
+}
+
 label {
   margin: 2.5vh 0vw 1vh 1vw;
   align-self: flex-start;
 }
 
 #custom_url,
+.search_container,
 .copy_container {
   padding: 5px 0px;
   height: 30px;
@@ -121,6 +139,7 @@ input[type="submit"] {
   margin: 10px;
 }
 
+.search_container,
 .copy_container {
   display: flex;
   justify-content: space-between;
@@ -128,6 +147,13 @@ input[type="submit"] {
   padding: 0;
   height: 42px;
   margin: 10px;
+}
+
+.search_bar {
+  width: 94%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .short_url {
@@ -140,10 +166,19 @@ input[type="submit"] {
   border-radius: 5px;
 }
 
+.search_button,
 .copy_button {
   height: 100%;
   width: 20%;
   border: none;
+  border-radius: 5px;
+  font-size: 20px;
+}
+
+.search_all_button {
+  height: 44px;
+  width: 20%;
+  border: 1px solid black;
   border-radius: 5px;
   font-size: 20px;
 }

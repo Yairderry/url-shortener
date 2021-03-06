@@ -19,45 +19,44 @@ shortUrl.post(
   validUrlCheck,
   isUrlShorterCheck,
   customUrlCheck,
-  (req, res) => {
-    const { url } = req.body;
-    const customUrl =
-      req.body.customUrl === "" ? database.totalUrls : req.body.customUrl;
+  async (req, res) => {
+    try {
+      const { url } = req.body;
+      const customUrl =
+        req.body.customUrl === "" ? database.totalUrls : req.body.customUrl;
 
-    database.findByOriginalUrl(url).then((theUrl) => {
-      if (theUrl) {
-        res.status(200).json({
-          original_url: theUrl.originalUrl,
-          short_url: theUrl.shortUrlId,
-        });
-        return;
+      let urlData;
+      urlData = await database.findByOriginalUrl(url);
+      if (!urlData) {
+        urlData = await database.addUrl(url, new Date(), customUrl);
       }
 
-      database.addUrl(url, new Date(), customUrl).then((addedUrl) => {
-        res.status(200).json({
-          original_url: addedUrl.originalUrl,
-          short_url: addedUrl.shortUrlId,
-        });
+      res.status(200).json({
+        original_url: urlData.originalUrl,
+        short_url: urlData.shortUrlId,
       });
-    });
+    } catch (e) {
+      res
+        .status(500)
+        .json({ error: "The server couldn't add the url to the database" });
+    }
   }
 );
 
-shortUrl.get("/:shortUrlId", urlCheck, (req, res) => {
-  const { shortUrlId } = req.params;
+shortUrl.get("/:shortUrlId", urlCheck, async (req, res) => {
+  try {
+    const { shortUrlId } = req.params;
+    const url = await database.findByShortUrlId(shortUrlId);
 
-  database
-    .findByShortUrlId(shortUrlId)
-    .then((url) => {
-      url.redirectCount++;
-      database.updateUrlData(url).then((response) => {
-        res.writeHead(302, { Location: url.originalUrl });
-        res.end();
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({ error: "There was an error with our servers" });
-    });
+    url.redirectCount++;
+    await database.updateUrlData(url);
+    res.writeHead(302, { Location: url.originalUrl });
+    res.end();
+  } catch {
+    res
+      .status(500)
+      .send({ error: "There server couldn't update the redirect count" });
+  }
 });
 
 module.exports = shortUrl;

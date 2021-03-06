@@ -33,21 +33,12 @@ class DataBase {
       });
   }
 
-  updateData(data) {
-    fsPromise
-      .writeFile(this.filePath, JSON.stringify(data, null, 4))
-      .then((res) => console.log(res))
-      .catch((err) => {
-        return axios
-          .put(this.backupPath, { body: data }, { headers: HEADERS })
-          .then((res) => console.log(res))
-          .catch((err) => console.log(err));
-      });
-
+  async updateData(data) {
     axios
       .put(this.backupPath, { body: data }, { headers: HEADERS })
-      .then((res) => console.log(res))
       .catch((err) => console.log(err));
+
+    await fsPromise.writeFile(this.filePath, JSON.stringify(data, null, 4));
   }
 
   getAllUrls() {
@@ -89,21 +80,21 @@ class DataBase {
         }
       }
 
-      this.updateData(urls);
+      return this.updateData(urls);
     });
   }
 
-  addUrl(originalUrl, date = new Date(), shortUrlId = this.urls) {
+  async addUrl(originalUrl, date = new Date(), shortUrlId = this.urls) {
     const url = new UrlData(
       originalUrl,
       DataBase.dateToSqlFormat(date),
       shortUrlId
     );
 
-    return this.getAllUrls().then((urls) => {
+    return this.getAllUrls().then(async (urls) => {
       urls.push(url);
       this.totalUrls++;
-      this.updateData(urls);
+      await this.updateData(urls);
       return url;
     });
   }
@@ -130,6 +121,6 @@ class DataBase {
   };
 }
 
-const database = new DataBase("./DB/UrlsDB.JSON", process.env.DB_URL);
+const database = new DataBase("./DB/DataBase.JSON", process.env.DB_URL);
 database.init();
 module.exports = database;
