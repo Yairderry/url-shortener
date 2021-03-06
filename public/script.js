@@ -11,43 +11,6 @@ navbar.addEventListener("click", switchTabs);
 searchAllButton.addEventListener("click", addAllStatistics);
 searchButton.addEventListener("click", addStatistics);
 
-function addStatistics(event) {
-  const table = document.querySelector("tbody");
-
-  while (table.childNodes.length > 2) {
-    table.removeChild(table.lastChild);
-  }
-
-  const searchInput = document.querySelector(".search_container input");
-  const shortUrlId = searchInput.value;
-
-  axios
-    .get(`${window.location.origin}/api/statistic/${shortUrlId}`)
-    .then((statistic) => createTableRow(statistic.data))
-    .catch((err) => {
-      alert(`${err.response.data.error}`);
-    });
-
-  searchInput.value = "";
-}
-
-function addAllStatistics(event) {
-  const table = document.querySelector("tbody");
-
-  while (table.childNodes.length > 2) {
-    table.removeChild(table.lastChild);
-  }
-
-  axios
-    .get(`${window.location.origin}/api/statistic`)
-    .then((statistics) => {
-      statistics.data.forEach((statistic) => createTableRow(statistic));
-    })
-    .catch((err) => {
-      alert(`${err.response.data.error}`);
-    });
-}
-
 // Printing elements to HTML
 function createTableRow(rowData) {
   const table = document.querySelector("tbody");
@@ -115,14 +78,54 @@ function switchTabs(event) {
   if (!tab.tagName === "li") return;
 
   const containers = document.querySelectorAll(".container");
+  const tabs = document.querySelectorAll("li");
 
   if (tab.id === "statistic") {
     containers[0].className = "container hidden";
     containers[1].className = "container wide";
+
+    tabs[0].className = "";
+    tabs[1].className = "active";
   }
 
   if (tab.id === "shorten") {
     containers[0].className = "container";
     containers[1].className = "container hidden";
+
+    tabs[0].className = "active";
+    tabs[1].className = "";
   }
+}
+
+function addStatistics(event) {
+  const table = document.querySelector("tbody");
+
+  table.innerHTML = "";
+
+  const searchInput = document.querySelector(".search_container input");
+  const shortUrlId = searchInput.value;
+
+  axios
+    .get(`${window.location.origin}/api/statistic/${shortUrlId}`)
+    .then((statistic) => createTableRow(statistic.data))
+    .catch((err) => {
+      alert(`${err.response.data.error}`);
+    });
+
+  searchInput.value = "";
+}
+
+function addAllStatistics(event) {
+  const table = document.querySelector("tbody");
+
+  table.innerHTML = "";
+
+  axios
+    .get(`${window.location.origin}/api/statistic`)
+    .then((statistics) => {
+      statistics.data.forEach((statistic) => createTableRow(statistic));
+    })
+    .catch((err) => {
+      alert(`${err.response.data.error}`);
+    });
 }

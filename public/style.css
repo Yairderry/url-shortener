@@ -129,6 +129,11 @@ input[type="submit"] {
   display: none;
 }
 
+.active {
+  background-color: gray;
+  color: white;
+}
+
 .line {
   width: 100%;
   height: 1px;
@@ -183,11 +188,41 @@ input[type="submit"] {
   font-size: 20px;
 }
 
-.statistics,
-tbody {
+.statistics {
   width: 100%;
+  table-layout: fixed;
+  text-align: center;
 }
 
-tr {
-  max-width: 60vw;
+td {
+  word-wrap: break-word;
+  width: fit-content;
+}
+
+table.statistics tr:nth-child(even) {
+  background: #edf2f5;
+}
+table.statistics thead {
+  background: #4c5357;
+  border-bottom: 5px solid #ffffff;
+}
+table.statistics thead th {
+  font-size: 17px;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+  border-left: 2px solid #ffffff;
+  border-radius: 5px;
+}
+table.statistics thead th:first-child {
+  width: 40%;
+}
+table.statistics thead th:nth-child(2) {
+  width: 17%;
+}
+table.statistics thead th:nth-child(3) {
+  width: 7%;
+}
+table.statistics thead th:last-child {
+  width: 7%;
 }
