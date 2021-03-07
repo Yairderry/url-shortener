@@ -2,7 +2,7 @@
 
 Welcome everybody! My first backend project is a very simple URL shortener microservice!
 
-You can also find this project in [repl.it](https://yairderry.github.io/pre-course-2021-final-boilerplate/src/index)
+You can also find this project in [repl.it](https://repl.it/@Yairderry/url-shortener)
 let's get started!
 
 ## My Features
