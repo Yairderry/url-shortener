@@ -1,6 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const database = require("../DB/DataBase.js");
 
 const statistic = express.Router();
 
@@ -9,7 +8,7 @@ statistic.use(express.urlencoded());
 
 statistic.get("/", async (req, res) => {
   try {
-    const urls = await database.getAllUrls();
+    const urls = await req.database.getAllUrls();
     res.status(200).json(urls);
   } catch (err) {
     res
@@ -21,7 +20,7 @@ statistic.get("/", async (req, res) => {
 statistic.get("/:shortUrlId", async (req, res) => {
   try {
     const { shortUrlId } = req.params;
-    const url = await database.findByShortUrlId(shortUrlId);
+    const url = await req.database.findByShortUrlId(shortUrlId);
     if (!url) {
       res.status(404).json({ error: "This short url was not found" });
     } else {

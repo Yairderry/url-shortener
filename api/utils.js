@@ -1,5 +1,3 @@
-const database = require("./DB/DataBase.js");
-
 const validUrlCheck = (req, res, next) => {
   const { url } = req.body;
 
@@ -16,7 +14,7 @@ const validUrlCheck = (req, res, next) => {
 const urlCheck = async (req, res, next) => {
   const { shortUrlId } = req.params;
 
-  const url = await database.findByShortUrlId(shortUrlId);
+  const url = await req.database.findByShortUrlId(shortUrlId);
   if (!url) {
     res.status(404).json({ error: "This short url was not found" });
   } else {
@@ -33,7 +31,7 @@ const customUrlCheck = async (req, res, next) => {
     return;
   }
 
-  const url = await database.findByShortUrlId(customUrl);
+  const url = await req.database.findByShortUrlId(customUrl);
   if (url) {
     res.status(400).send({ error: "custom url already taken!" });
     return;
@@ -43,7 +41,7 @@ const customUrlCheck = async (req, res, next) => {
 
 const isUrlShorterCheck = (req, res, next) => {
   const customUrl =
-    req.body.customUrl === "" ? database.totalUrls : req.body.customUrl;
+    req.body.customUrl === "" ? req.database.totalUrls : req.body.customUrl;
   const origin = req.headers.referer
     ? req.headers.referer
     : `http://localhost:${process.env.PORT}/`;
