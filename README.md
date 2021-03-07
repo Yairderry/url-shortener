@@ -10,7 +10,8 @@ let's get started!
 ---
 
 - **Custom URL** - My service allows you to customize the url you'll get, provided it's not taken of course.
-- **statistics** - If you are a business that needs more information about your new shortened URL i got you covered as well, you can excess the statistics about it in the statistics tab. They include data about creation date and the amount of redirects to the URL(more statistics will be added in the future!).
+- **statistics** - If you are a business that needs more information about your new shortened URL i got you covered as well, you can access the statistics about it in the statistics tab. They include data about creation date and the amount of redirects to the URL(more statistics will be added in the future!).
+- **Backup DataBase** - we keep an extra copy in a different remote database if our original database cannot be accessed.
 
 ### Preventing mistakes
 
