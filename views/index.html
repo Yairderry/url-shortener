@@ -3,31 +3,79 @@
 <html>
   <head>
     <title>URL Shortener</title>
-    <link rel="icon" type="image/png" href="../public/favicon.ico" />
     <link href="./public/style.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
 
   <body>
-    <h1>URL Shortener Microservice</h1>
+    <h1>Short The Fuck Up!</h1>
+    <h2>You got a big URL? Not anymore you don't!</h2>
     <main>
+      <ul id="navbar">
+        <li id="shorten" class="active">shorten</li>
+        <li id="statistic">statistic</li>
+      </ul>
       <section>
-        <form action="api/shorturl/new" method="POST">
-          <fieldset>
-            <legend>URL Shortener</legend>
-            <label for="url_input">URL:</label>
+        <div class="container">
+          <label for="url_input">Put your damn URL in there!</label>
+          <input
+            id="url_input"
+            type="text"
+            name="url"
+            placeholder="Anything but pornhub please..."
+          />
+          <label for="custom-url-input">You can choose your own name</label>
+          <div id="custom_url">
+            <span>localhost:PORT/api/shortrul/</span>
+
             <input
-              id="url_input"
+              id="custom_url_input"
               type="text"
-              name="url"
-              placeholder="https://www.freecodecamp.org/"
+              name="customUrl"
+              placeholder="Shits n' giggles"
             />
-            <input type="submit" value="POST URL" />
-          </fieldset>
-        </form>
+          </div>
+          <input
+            id="short_button"
+            type="submit"
+            value="All i do is click, click, click, no matter what"
+          />
+          <div class="original_and_short_urls hidden">
+            <div class="line"></div>
+            <label for="original_url">Original url</label>
+            <input class="original_url" type="text" />
+            <label for="short_url">Shortened url</label>
+            <div class="copy_container">
+              <input class="short_url" type="text" />
+              <button class="copy_button">Copy url</button>
+            </div>
+          </div>
+        </div>
+        <div class="container wide hidden">
+          <div class="search_bar">
+            <div class="search_container">
+              <input
+                class="short_url"
+                type="text"
+                placeholder="Give me a short URL ID  and you'll get their stats"
+              />
+              <button class="search_button">Search</button>
+            </div>
+            <button class="search_all_button">All stats</button>
+          </div>
+          <div class="line"></div>
+          <table class="statistics">
+            <thead>
+              <th>Original URL</th>
+              <th>Creation Date</th>
+              <th>Short URL ID</th>
+              <th>Redirect Count</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </section>
     </main>
-    <footer>
-      <p>By <a href="https://www.freecodecamp.org/">freeCodeCamp</a></p>
-    </footer>
+    <script src="./public/script.js"></script>
   </body>
 </html>
